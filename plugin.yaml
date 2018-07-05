@@ -1,0 +1,6 @@
+id: com.github.moussetc.mattermost.plugin.emoticon2emoji
+name: Emoticon to emojis translator
+description: Automatically convert emoticons such as XD to emoji like :laughing:
+version: '0.0.1'
+backend:
+    executable: plugin
