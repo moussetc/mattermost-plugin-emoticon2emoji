@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/mattermost/mattermost-server/model"
 
 	"github.com/mattermost/mattermost-server/plugin/plugintest"
@@ -22,3 +24,13 @@ func initTestPlugin(t *testing.T) *plugintest.API {
 	return api
 }
 
+func TestUnserializeMatches(t *testing.T) {
+	p := Emoticon2EmojiPlugin{}
+
+	result, err := p.unserializeMatches("{\";)\": \"wink\", \"^^\\\"\":\"hehe\"}")
+	assert.NotNil(t, result)
+	assert.Nil(t, err)
+	assert.Len(t, result, 2)
+	assert.Equal(t, "wink", result[";)"])
+	assert.Equal(t, "hehe", result["^^\""])
+}

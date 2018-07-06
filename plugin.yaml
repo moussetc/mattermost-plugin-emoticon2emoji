@@ -1,6 +1,12 @@
 id: com.github.moussetc.mattermost.plugin.emoticon2emoji
-name: Emoticon to emojis translator
-description: "Automatically convert emoticons such as XD to emoji like :laughing:"
-version: '0.0.1'
+name: Emoticon2emojis
+description: "Map some more emoticons to emojis (for example XD will be converted to :laughing: )"
+version: '1.0.0'
 backend:
     executable: plugin
+settings_schema:
+    settings:
+        - key: Matches
+          type: text
+          display_name: Custom mapping
+          help_text: "Define your own emoticon to emoji mapping to replace the default mapping. The expected format is a JSON map (example : {\":)\":\"grin\", \":(\": \"cry\"}). Don't put the colons for the emoji code and don't forget to escape any special characters !"

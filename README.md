@@ -1,7 +1,5 @@
 # mattermost-plugin-emoticon2emoji
-A Mattermost plugin to transform plain text emoticons like XD to picture emojis like :laughing:
-
-# PLUGIN STATUS : the plugin is being developed...
+A plugin that add some emoticon to emoji mappings to Mattermost to transform. For example, a plain text emoticon like XD will be automatically converted to  :laughing:. The Slack mappings that are not done by default by Mattermost are added in this plugin, plus some more.
 
 ## Requirements
 - Mattermost 5.0 (to allow plugins to intercept posts).
@@ -11,13 +9,14 @@ A Mattermost plugin to transform plain text emoticons like XD to picture emojis 
 2. Use the Mattermost `System Console > Plugins Management > Management` page to upload the `.tar.gz` package
 3. **Activate the plugin** in the `System Console > Plugins Management > Management` page
 
-## Manual configuration TODO
+## Manual configuration
 If you need to enable & configure this plugin directly in the Mattermost configuration file `config.json`, for example if you are doing a [High Availability setup](https://docs.mattermost.com/deployment/cluster.html), you can use the following lines (remember to set the API key!):
 ```json
  "PluginSettings": {
         // [...]
         "Plugins": {
             "com.github.moussetc.mattermost.plugin.emoticon2emoji": {
+                "Matches": ""
             },
         },
         "PluginStates": {
@@ -30,7 +29,10 @@ If you need to enable & configure this plugin directly in the Mattermost configu
 ```
 
 ## Usage
-TODO : list of supported emoticons
+Use the usual emoticons and the post will be automatically updated to replace the emoticon by the emoji code.
+
+You can define your own emoji mappings in the plugin configuration screen (it will replace entirely the default mapping).
+ To see the default emoji mappings, see the `default_matches.go` file.
 
 ## Development
 Run make vendor to install dependencies, then develop like any other Go project, using go test, go build, etc.
@@ -38,4 +40,8 @@ Run make vendor to install dependencies, then develop like any other Go project,
 If you want to create a fully bundled plugin that will run on a local server, you can use `make mattermost-plugin-emoticon2emoji.tar.gz`.
 
 ## What's next?
-TODO
+- add some auto tests
+- allow admin to change some mappings without replacing ALL the default mappings
+- have someone check the default mappings
+- option to replace emoticon by unicode symbol
+- make the plugin opt-in or opt-out with a list of users
