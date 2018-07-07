@@ -14,14 +14,15 @@ import (
 
 // Emoticon2EmojiPlugin is a Mattermost plugin that replace text emoticons in messages by an emoji approximation
 type Emoticon2EmojiPlugin struct {
-	api           plugin.API
-	configuration atomic.Value
-	enabled       bool
-	matches       map[string]string
+	api              plugin.API
+	configuration    atomic.Value
+	enabled          bool
+	effectiveMatches atomic.Value
 }
 
 type Emoticon2EmojiPluginConfiguration struct {
-	Matches string
+	MatchesChoice string
+	UserMatches   string
 }
 
 // OnActivate register the plugin command
@@ -43,6 +44,11 @@ func (p *Emoticon2EmojiPlugin) config() *Emoticon2EmojiPluginConfiguration {
 	return p.configuration.Load().(*Emoticon2EmojiPluginConfiguration)
 }
 
+// Load and return the configured matches
+func (p *Emoticon2EmojiPlugin) matches() map[string]string {
+	return p.effectiveMatches.Load().(map[string]string)
+}
+
 func (p *Emoticon2EmojiPlugin) OnConfigurationChange() error {
 	var configuration Emoticon2EmojiPluginConfiguration
 	if err := p.api.LoadPluginConfiguration(&configuration); err != nil {
@@ -50,21 +56,38 @@ func (p *Emoticon2EmojiPlugin) OnConfigurationChange() error {
 	}
 
 	p.configuration.Store(&configuration)
-
-	matches, err := p.unserializeMatches(configuration.Matches)
+	userMatches, err := p.unserializeMatches(configuration.UserMatches)
 
 	if err != nil {
 		return appError("Unable to parse the emoticons to emojis matches list", err)
 	}
 
-	p.matches = matches
-
+	// user mappings > slack mappings > default mappings > mattermost mappings
+	effectiveMap := map[string]string{}
+	if configuration.MatchesChoice == "" {
+		configuration.MatchesChoice = "slack_default_custom"
+	}
+	if strings.Contains(configuration.MatchesChoice, "default") {
+		effectiveMap = DefaultMatches
+	}
+	if strings.Contains(configuration.MatchesChoice, "slack") {
+		for k, v := range SlackMatches {
+			effectiveMap[k] = v
+		}
+	}
+	if strings.Contains(configuration.MatchesChoice, "custom") {
+		for k, v := range userMatches {
+			effectiveMap[k] = v
+		}
+	}
+	p.effectiveMatches.Store(effectiveMap)
 	return nil
 }
 
+// Unserialize a JSON string to a map of matches
 func (p *Emoticon2EmojiPlugin) unserializeMatches(matches string) (map[string]string, error) {
 	if matches == "" {
-		return default_matches, nil
+		return map[string]string{}, nil
 	}
 
 	var matchesMap map[string]string
@@ -89,7 +112,7 @@ func (p *Emoticon2EmojiPlugin) MessageWillBeUpdated(newPost, oldPost *model.Post
 
 // Translate replace all the configured emoticons in a post by their equivalent as Mattermost emojis
 func (p *Emoticon2EmojiPlugin) translate(post *model.Post) (*model.Post, string) {
-	for emoticon, emoji := range p.matches {
+	for emoticon, emoji := range p.matches() {
 		if strings.TrimSpace(post.Message) == emoticon {
 			// Only an emoticon + whitespace
 			post.Message = strings.Replace(post.Message, emoticon, ":"+emoji+":", -1)

@@ -1,12 +1,30 @@
 id: com.github.moussetc.mattermost.plugin.emoticon2emoji
-name: Emoticon2emojis
-description: "Map some more emoticons to emojis (for example XD will be converted to :laughing: )"
+name: Emoticon to Emoji
+description: "Add Slack emoticon to emoji conversion and some others (like XD to :laughing:) and allow customized mappings"
 version: '1.0.0'
 backend:
     executable: plugin
 settings_schema:
+    header: "The plugin defines 3 emoticon to emoji mappings:\n- the *Slack mappings* add the mappings [that are present on Slack](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) but not on Mattermost\n- the plugin *Default mappings* complete the Slack mappings with some other common emoticons (see [the repository](https://github.com/moussetc/mattermost-plugin-emoticon2emoji/) for the complete list)\n- the *Custom mappings* list is empty by default and can be defined below\nThe Custom mappings take precedence over the Slack mappings and the Default mappings."
     settings:
-        - key: Matches
+        - key: MatchesChoice
+          type: dropdown
+          display_name: Choose your mappings
+          help_text: Select the combination of emoticon to emoji mappings that should be used
+          default: slack_default_custom
+          options:
+            - display_name: Slack + Default + Custom
+              value: "slack_default_custom"
+            - display_name: Slack + Default
+              value: "slack_default"            
+            - display_name: Slack + Custom
+              value: "slack_custom"
+            - display_name: Custom
+              value: "custom"
+        - key: UserMatches
           type: text
           display_name: Custom mapping
-          help_text: "Define your own emoticon to emoji mapping to replace the default mapping. The expected format is a JSON map (example : {\":)\":\"grin\", \":(\": \"cry\"}). Don't put the colons for the emoji code and don't forget to escape any special characters !"
+          placeholder: "{\":)\":\"grin\", \":(\": \"cry\"}"
+          help_text: "Define your own emoticon to emoji mappings to replace the default mappings. The expected format is a JSON map. Don't put the colons for the emoji code and don't forget to escape any special characters !"
+    footer: |
+        To report an issue, make a suggestion or a contribution, or fork your own version of the plugin, [check the repository](https://github.com/moussetc/mattermost-plugin-emoticon2emoji/).

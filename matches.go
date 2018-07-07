@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-var default_matches = map[string]string{
-	// add some from slack
+// Missing matches from Slack
+var SlackMatches = map[string]string{
 	"</3":  "broken_heart",
 	"8)":   "sunglasses",
 	"D:":   "anguished",
@@ -35,8 +35,10 @@ var default_matches = map[string]string{
 	";p":   "stuck_out_tongue_closed_eyes",
 	";b":   "stuck_out_tongue_closed_eyes",
 	";-b":  "stuck_out_tongue_closed_eyes",
+}
 
-	// Add some from https://en.wikipedia.org/wiki/List_of_emoticons
+// Some more matches from https://en.wikipedia.org/wiki/List_of_emoticons
+var DefaultMatches = map[string]string{
 	// Smiley or happy face
 	":‑)": "smiley",
 	":)":  "smiley", // mattermost
@@ -147,9 +149,16 @@ var default_matches = map[string]string{
 	">;)":  "smiling_imp",
 }
 
+func printSlackMatches() {
+	b := new(bytes.Buffer)
+	e := json.NewEncoder(b)
+	e.Encode(SlackMatches)
+	fmt.Println(string(b.Bytes()))
+}
+
 func printDefaultMatches() {
 	b := new(bytes.Buffer)
 	e := json.NewEncoder(b)
-	e.Encode(default_matches)
+	e.Encode(DefaultMatches)
 	fmt.Println(string(b.Bytes()))
 }
