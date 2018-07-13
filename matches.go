@@ -1,11 +1,5 @@
 package main
 
-import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-)
-
 // Missing matches from Slack
 var SlackMatches = map[string]string{
 	"</3":  "broken_heart",
@@ -147,18 +141,4 @@ var DefaultMatches = map[string]string{
 	"3:‑)": "smiling_imp",
 	"3:)":  "smiling_imp",
 	">;)":  "smiling_imp",
-}
-
-func printSlackMatches() {
-	b := new(bytes.Buffer)
-	e := json.NewEncoder(b)
-	e.Encode(SlackMatches)
-	fmt.Println(string(b.Bytes()))
-}
-
-func printDefaultMatches() {
-	b := new(bytes.Buffer)
-	e := json.NewEncoder(b)
-	e.Encode(DefaultMatches)
-	fmt.Println(string(b.Bytes()))
 }

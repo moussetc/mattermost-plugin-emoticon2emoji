@@ -1,7 +1,7 @@
 #
 # Makefile for Mattermost emoticon2emoji
 #
-SRC=plugin.go matches.go
+SRC=plugin.go emoticon.go matches.go
 EXEC=plugin
 CONF=plugin.yaml
 PACKAGE_BASENAME=mattermost-plugin-emoticon2emoji
