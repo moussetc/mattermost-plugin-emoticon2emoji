@@ -1,5 +1,5 @@
 # mattermost-plugin-emoticon2emoji
-A plugin that completes the automatic conversion from emoticon to emoji (:) to :smile:) in Mattermost messages, by adding [Slack mappings](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) and some other (see `matches.go` for the default list) which wan be configured.
+A plugin that completes the automatic conversion from emoticon to emoji (:) to :smile:) in Mattermost messages, by adding [Slack mappings](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) and some other (see `matches.go` for the default list) which can be configured.
 
 ## Requirements
 - Mattermost 5.0 (to allow plugins to intercept posts).
