@@ -1,0 +1,13 @@
+plugin
+plugin.exe
+debug
+debug.test*
+plugin.tar.gz
+mattermost-plugin-emoticon2emoji.exe
+mattermost-plugin-emoticon2emoji.tar.gz
+vendor/
+dist/
+.vscode/
+launch.json
+coverage.txt
+Gopkg.lock
