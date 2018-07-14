@@ -1,5 +1,5 @@
 # mattermost-plugin-emoticon2emoji
-A plugin that completes the automatic conversion from emoticon to emoji (:) to :smile:) in Mattermost messages, by adding [Slack mappings](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) and some other (see `matches.go` for the full list) and permitting the administrator to define custom mappings.
+A plugin that completes the automatic conversion from emoticon to emoji (:) to :smile:) in Mattermost messages, by adding [Slack mappings](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) and some other (see `matches.go` for the default list) which wan be configured.
 
 ## Requirements
 - Mattermost 5.0 (to allow plugins to intercept posts).
@@ -7,19 +7,17 @@ A plugin that completes the automatic conversion from emoticon to emoji (:) to :
 ## Installation and configuration
 1. Go to the [Releases page](https://github.com/moussetc/mattermost-plugin-emoticon2emoji/releases) and download the package for your OS and architecture.
 2. Use the Mattermost `System Console > Plugins Management > Management` page to upload the `.tar.gz` package
-3. Go to the plugin configuration page and follow the instructions
+3. Go to the plugin configuration page to edit the custom mappings if needed
 4. **Activate the plugin** in the `System Console > Plugins Management > Management` page
 
 ## Manual configuration
-If you need to enable & configure this plugin directly in the Mattermost configuration file `config.json`, for example if you are doing a [High Availability setup](https://docs.mattermost.com/deployment/cluster.html), you can use the following lines (remember to set the API key!):
+If you need to enable & configure this plugin directly in the Mattermost configuration file `config.json`, for example if you are doing a [High Availability setup](https://docs.mattermost.com/deployment/cluster.html), you can use the following lines:
 ```json
  "PluginSettings": {
         // [...]
         "Plugins": {
             "com.github.moussetc.mattermost.plugin.emoticon2emoji": {
-                "MatchesChoice": "slack_default_custom", // other choices are combinations of slack, default and custom
-                "UserMatches": "{}" // custom emoticons->emoji mappings in JSON format, for example "{\":)\":\"grin\", \":(\": \"cry\"}"
-            },
+                "CustomMatches": "" // custom emoticons->emoji mappings in JSON format, see plugin.yaml for the default value
         },
         "PluginStates": {
             // [...]

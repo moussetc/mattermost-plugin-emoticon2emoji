@@ -15,8 +15,7 @@ func initTestPlugin(t *testing.T, config *Emoticon2EmojiPluginConfiguration) *pl
 	api := &plugintest.API{}
 	api.On("LoadPluginConfiguration", mock.MatchedBy(func(x interface{}) bool { return true })).Run(func(args mock.Arguments) {
 		dest := args.Get(0).(*Emoticon2EmojiPluginConfiguration)
-		dest.MatchesChoice = config.MatchesChoice
-		dest.UserMatches = config.UserMatches
+		dest.CustomMatches = config.CustomMatches
 	}).Return(nil)
 	return api
 }
@@ -24,7 +23,7 @@ func initTestPlugin(t *testing.T, config *Emoticon2EmojiPluginConfiguration) *pl
 func TestNewPostWithDefaultEmoticon(t *testing.T) {
 	p := Emoticon2EmojiPlugin{}
 	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "slack_default_custom",
+		CustomMatches: "{\"XD\":\"laughing\"}",
 	}
 	p.OnActivate(initTestPlugin(t, &config))
 
@@ -39,9 +38,7 @@ func TestNewPostWithDefaultEmoticon(t *testing.T) {
 
 func TestUpdatedPostWithSlackEmoticon(t *testing.T) {
 	p := Emoticon2EmojiPlugin{}
-	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "slack_default_custom",
-	}
+	config := Emoticon2EmojiPluginConfiguration{}
 	p.OnActivate(initTestPlugin(t, &config))
 
 	post := &model.Post{
@@ -97,68 +94,16 @@ func TestReplaceWithOnlyEmoticon(t *testing.T) {
 func TestMappingsPrecedence(t *testing.T) {
 	p := Emoticon2EmojiPlugin{}
 	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "slack_default_custom",
-		UserMatches:   "{\"XD\":\"cry\"}",
+		CustomMatches: "{\"8)\":\"cry\"}",
 	}
 	p.OnActivate(initTestPlugin(t, &config))
 
 	post := &model.Post{
-		Message: "XD",
+		Message: "8)",
 	}
 	post, err := p.MessageWillBeUpdated(post, nil)
 	assert.NotNil(t, post)
 	assert.Equal(t, ":cry:", post.Message)
-	assert.Equal(t, "", err)
-}
-
-func TestMappingsPrecedenceWithoutCustom(t *testing.T) {
-	p := Emoticon2EmojiPlugin{}
-	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "slack_default",
-		UserMatches:   "{\"XD\":\"cry\"}",
-	}
-	p.OnActivate(initTestPlugin(t, &config))
-
-	post := &model.Post{
-		Message: "XD",
-	}
-	post, err := p.MessageWillBeUpdated(post, nil)
-	assert.NotNil(t, post)
-	assert.Equal(t, ":laughing:", post.Message)
-	assert.Equal(t, "", err)
-}
-
-func TestMappingsPrecedenceWithoutSlack(t *testing.T) {
-	p := Emoticon2EmojiPlugin{}
-	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "default_custom",
-		UserMatches:   "{\"XD\":\"cry\"}",
-	}
-	p.OnActivate(initTestPlugin(t, &config))
-
-	post := &model.Post{
-		Message: "</3",
-	}
-	post, err := p.MessageWillBeUpdated(post, nil)
-	assert.NotNil(t, post)
-	assert.Equal(t, "</3", post.Message)
-	assert.Equal(t, "", err)
-}
-
-func TestMappingsPrecedenceWithoutDefault(t *testing.T) {
-	p := Emoticon2EmojiPlugin{}
-	config := Emoticon2EmojiPluginConfiguration{
-		MatchesChoice: "slack_custom",
-		UserMatches:   "{\"XD\":\"cry\"}",
-	}
-	p.OnActivate(initTestPlugin(t, &config))
-
-	post := &model.Post{
-		Message: "8D",
-	}
-	post, err := p.MessageWillBeUpdated(post, nil)
-	assert.NotNil(t, post)
-	assert.Equal(t, "8D", post.Message)
 	assert.Equal(t, "", err)
 }
 
@@ -169,17 +114,4 @@ func TestUnserializeMatches(t *testing.T) {
 	assert.Len(t, result, 2)
 	assert.Equal(t, "broken_heart", result[";)"])
 	assert.Equal(t, "hehe", result["^^\""])
-}
-
-func TestOnLoadConfigurationError(t *testing.T) {
-	p := Emoticon2EmojiPlugin{}
-	api := &plugintest.API{}
-	apiLoadConfigError := &model.AppError{
-		Message: "argh",
-	}
-
-	api.On("LoadPluginConfiguration", mock.Anything).Return(apiLoadConfigError)
-	err := p.OnActivate(api)
-	assert.NotNil(t, err)
-	assert.Contains(t, err, apiLoadConfigError.Message)
 }

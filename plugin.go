@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"regexp"
 	"sync/atomic"
 
 	"github.com/mattermost/mattermost-server/model"
@@ -17,11 +16,6 @@ type Emoticon2EmojiPlugin struct {
 	matches       map[string]match
 }
 
-type match struct {
-	replacement string
-	regexp      *regexp.Regexp
-}
-
 // OnActivate register the plugin command
 func (p *Emoticon2EmojiPlugin) OnActivate(api plugin.API) error {
 	p.api = api
@@ -29,6 +23,7 @@ func (p *Emoticon2EmojiPlugin) OnActivate(api plugin.API) error {
 	return p.OnConfigurationChange()
 }
 
+// OnConfigurationChange apply a new plugin configuration
 func (p *Emoticon2EmojiPlugin) OnConfigurationChange() error {
 	var configuration Emoticon2EmojiPluginConfiguration
 	if err := p.api.LoadPluginConfiguration(&configuration); err != nil {

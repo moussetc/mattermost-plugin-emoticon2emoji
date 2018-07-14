@@ -8,35 +8,27 @@ import (
 	"strings"
 )
 
+type match struct {
+	replacement string
+	regexp      *regexp.Regexp
+}
+
+// Emoticon2EmojiPluginConfiguration is the serialisable plugin configuration
 type Emoticon2EmojiPluginConfiguration struct {
-	MatchesChoice string
-	UserMatches   string
+	CustomMatches string
 }
 
 func (p *Emoticon2EmojiPlugin) applyNewConfig(configuration *Emoticon2EmojiPluginConfiguration) error {
-	userMatches, err := unserializeConfigMatches(configuration.UserMatches)
-
+	// read custom map from config
+	CustomMatches, err := unserializeConfigMatches(configuration.CustomMatches)
 	if err != nil {
 		return appError("Unable to parse the emoticons to emojis matches list", err)
 	}
 
-	// user mappings > slack mappings > default mappings > mattermost mappings
-	effectiveMap := map[string]string{}
-	if configuration.MatchesChoice == "" {
-		configuration.MatchesChoice = "slack_default_custom"
-	}
-	if strings.Contains(configuration.MatchesChoice, "default") {
-		effectiveMap = DefaultMatches
-	}
-	if strings.Contains(configuration.MatchesChoice, "slack") {
-		for k, v := range SlackMatches {
-			effectiveMap[k] = v
-		}
-	}
-	if strings.Contains(configuration.MatchesChoice, "custom") {
-		for k, v := range userMatches {
-			effectiveMap[k] = v
-		}
+	// custom mappings > slack mappings
+	effectiveMap := slackMatches
+	for k, v := range CustomMatches {
+		effectiveMap[k] = v
 	}
 	p.matches = map[string]match{}
 	for emoticon, emoji := range effectiveMap {
@@ -56,7 +48,7 @@ func getEmoticonRegexp(emoticon string) *regexp.Regexp {
 // Read a string of serialized matches (JSON) into a map
 func unserializeConfigMatches(matches string) (map[string]string, error) {
 	if matches == "" {
-		return map[string]string{}, nil
+		return defaultCustomMatches, nil
 	}
 
 	var matchesMap map[string]string

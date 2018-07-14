@@ -5,26 +5,12 @@ version: '1.0.0'
 backend:
     executable: plugin
 settings_schema:
-    header: "The plugin defines 3 emoticon to emoji mappings:\n- the *Slack mappings* add the mappings [that are present on Slack](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) but not on Mattermost\n- the plugin *Default mappings* complete the Slack mappings with some other common emoticons (see [the repository](https://github.com/moussetc/mattermost-plugin-emoticon2emoji/) for the complete list)\n- the *Custom mappings* list is empty by default and can be defined below\nThe Custom mappings take precedence over the Slack mappings and the Default mappings."
+    header: "The plugin applies both the [Slack emoticon->emoji mappings](https://get.slack.help/hc/en-us/articles/202931348-Use-emoji-and-emoticons#use-emoticons) and a customizable mappings list which can be edited below."
     settings:
-        - key: MatchesChoice
-          type: dropdown
-          display_name: Choose your mappings
-          help_text: Select the combination of emoticon to emoji mappings that should be used
-          default: slack_default_custom
-          options:
-            - display_name: Slack + Default + Custom
-              value: "slack_default_custom"
-            - display_name: Slack + Default
-              value: "slack_default"            
-            - display_name: Slack + Custom
-              value: "slack_custom"
-            - display_name: Custom
-              value: "custom"
-        - key: UserMatches
+        - key: CustomMatches
           type: text
-          display_name: Custom mapping
-          placeholder: "{\":)\":\"grin\", \":(\": \"cry\"}"
-          help_text: "Define your own emoticon to emoji mappings to replace the default mappings. The expected format is a JSON map. Don't put the colons for the emoji code and don't forget to escape any special characters !"
+          display_name: Custom mappings
+          help_text: "Define your own emoticon to emoji mappings to replace the default mappings. The expected format is a JSON map. Don't put the colons for the emoji code and don't forget to escape any special characters ! To remove all custom mappings, put it to `{}`"
+          default: "{ \":-3\": \"smiley\",	\":3\":  \"smiley\",	\"8-)\": \"sunglasses\",	\"8‑D\": \"smile\",	\"8D\":  \"smile\",	\"xD\":  \"laughing\",	\"xd\":  \"laughing\",	\"XD\":  \"laughing\",	\"=D\":  \"smile\",	\"=3\":  \"smile\",	\":c\":  \"frowning_face\",	\":<\":  \"frowning\",	\":@\":  \"rage\",	\":')\": \"joy\",	\"XP\":  \"stuck_out_tongue_closed_eyes\",	\"xp\":  \"stuck_out_tongue_closed_eyes\",	\":X\":  \"zipper_mouth_face\",	\"O:)\": \"angel\",	\">:)\": \"smiling_imp\"}"
     footer: |
         To report an issue, make a suggestion or a contribution, or fork your own version of the plugin, [check the repository](https://github.com/moussetc/mattermost-plugin-emoticon2emoji/).
