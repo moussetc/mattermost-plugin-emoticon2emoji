@@ -1,7 +1,7 @@
 id: com.github.moussetc.mattermost.plugin.emoticon2emoji
 name: Emoticon to Emoji
 description: "Add Slack emoticon to emoji conversion and some others (like XD to :laughing:) and allow customized mappings"
-version: '1.0.0'
+version: '2.0.0'
 backend:
     executable: plugin
 settings_schema:
