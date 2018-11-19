@@ -13,10 +13,13 @@ import (
 
 func initTestPlugin(t *testing.T, config *Emoticon2EmojiPluginConfiguration) *plugintest.API {
 	api := &plugintest.API{}
-	api.On("LoadPluginConfiguration", mock.MatchedBy(func(x interface{}) bool { return true })).Run(func(args mock.Arguments) {
+	api.On("LoadPluginConfiguration", mock.AnythingOfType("*main.Emoticon2EmojiPluginConfiguration")).Run(func(args mock.Arguments) {
 		dest := args.Get(0).(*Emoticon2EmojiPluginConfiguration)
 		dest.CustomMatches = config.CustomMatches
-	}).Return(nil)
+	}).Return(func(dest interface{}) error {
+		*dest.(*Emoticon2EmojiPluginConfiguration) = *config
+		return nil
+	})
 	return api
 }
 
@@ -25,12 +28,13 @@ func TestNewPostWithDefaultEmoticon(t *testing.T) {
 	config := Emoticon2EmojiPluginConfiguration{
 		CustomMatches: "{\"XD\":\"laughing\"}",
 	}
-	p.OnActivate(initTestPlugin(t, &config))
+	p.API = initTestPlugin(t, &config)
+	p.OnConfigurationChange()
 
 	post := &model.Post{
 		Message: "Hello XD !!",
 	}
-	post, err := p.MessageWillBePosted(post)
+	post, err := p.MessageWillBePosted(nil, post)
 	assert.NotNil(t, post)
 	assert.Equal(t, "Hello :laughing: !!", post.Message)
 	assert.Equal(t, "", err)
@@ -39,12 +43,13 @@ func TestNewPostWithDefaultEmoticon(t *testing.T) {
 func TestUpdatedPostWithSlackEmoticon(t *testing.T) {
 	p := Emoticon2EmojiPlugin{}
 	config := Emoticon2EmojiPluginConfiguration{}
-	p.OnActivate(initTestPlugin(t, &config))
+	p.API = initTestPlugin(t, &config)
+	p.OnConfigurationChange()
 
 	post := &model.Post{
 		Message: "Hello </3 !!",
 	}
-	post, err := p.MessageWillBeUpdated(post, nil)
+	post, err := p.MessageWillBeUpdated(nil, post, nil)
 	assert.NotNil(t, post)
 	assert.Equal(t, "Hello :broken_heart: !!", post.Message)
 	assert.Equal(t, "", err)
@@ -96,12 +101,13 @@ func TestMappingsPrecedence(t *testing.T) {
 	config := Emoticon2EmojiPluginConfiguration{
 		CustomMatches: "{\"8)\":\"cry\"}",
 	}
-	p.OnActivate(initTestPlugin(t, &config))
+	p.API = initTestPlugin(t, &config)
+	p.OnConfigurationChange()
 
 	post := &model.Post{
 		Message: "8)",
 	}
-	post, err := p.MessageWillBeUpdated(post, nil)
+	post, err := p.MessageWillBeUpdated(nil, post, nil)
 	assert.NotNil(t, post)
 	assert.Equal(t, ":cry:", post.Message)
 	assert.Equal(t, "", err)

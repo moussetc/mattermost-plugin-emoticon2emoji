@@ -13,11 +13,6 @@ type match struct {
 	regexp      *regexp.Regexp
 }
 
-// Emoticon2EmojiPluginConfiguration is the serialisable plugin configuration
-type Emoticon2EmojiPluginConfiguration struct {
-	CustomMatches string
-}
-
 func (p *Emoticon2EmojiPlugin) applyNewConfig(configuration *Emoticon2EmojiPluginConfiguration) error {
 	// read custom map from config
 	CustomMatches, err := unserializeConfigMatches(configuration.CustomMatches)
@@ -30,9 +25,9 @@ func (p *Emoticon2EmojiPlugin) applyNewConfig(configuration *Emoticon2EmojiPlugi
 	for k, v := range CustomMatches {
 		effectiveMap[k] = v
 	}
-	p.matches = map[string]match{}
+	configuration.matches = map[string]match{}
 	for emoticon, emoji := range effectiveMap {
-		p.matches[emoticon] = match{
+		configuration.matches[emoticon] = match{
 			replacement: emoji,
 			regexp:      getEmoticonRegexp(emoticon),
 		}
@@ -63,8 +58,9 @@ func unserializeConfigMatches(matches string) (map[string]string, error) {
 
 // Translate replace all the configured emoticons in a string by their equivalent as Mattermost emojis
 func (p *Emoticon2EmojiPlugin) translate(input string) (result string) {
-	if p.matches != nil {
-		return translate(input, p.matches)
+	config := p.getConfiguration()
+	if config != nil && config.matches != nil {
+		return translate(input, config.matches)
 	}
 	return input
 }

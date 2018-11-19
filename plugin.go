@@ -2,49 +2,35 @@ package main
 
 import (
 	"net/http"
-	"sync/atomic"
+	"sync"
 
 	"github.com/mattermost/mattermost-server/model"
 	"github.com/mattermost/mattermost-server/plugin"
-	"github.com/mattermost/mattermost-server/plugin/rpcplugin"
 )
 
 // Emoticon2EmojiPlugin is a Mattermost plugin that replace text emoticons in messages by an emoji approximation
 type Emoticon2EmojiPlugin struct {
-	api           plugin.API
-	configuration atomic.Value
-	matches       map[string]match
+	plugin.MattermostPlugin
+	// configurationLock synchronizes access to the configuration.
+	configurationLock sync.RWMutex
+	// configuration is the active plugin configuration. Consult getConfiguration and
+	// setConfiguration for usage.
+	configuration *Emoticon2EmojiPluginConfiguration
 }
 
 // OnActivate register the plugin command
-func (p *Emoticon2EmojiPlugin) OnActivate(api plugin.API) error {
-	p.api = api
-
+func (p *Emoticon2EmojiPlugin) OnActivate() error {
 	return p.OnConfigurationChange()
 }
 
-// OnConfigurationChange apply a new plugin configuration
-func (p *Emoticon2EmojiPlugin) OnConfigurationChange() error {
-	var configuration Emoticon2EmojiPluginConfiguration
-	if err := p.api.LoadPluginConfiguration(&configuration); err != nil {
-		return appError("Unable to load new plugin configuration", err)
-	}
-
-	p.configuration.Store(&configuration)
-	if err := p.applyNewConfig(&configuration); err != nil {
-		return appError("Unable to apply new plugin configuration", err)
-	}
-	return nil
-}
-
 // MessageWillBePosted converts emoticons in new posts
-func (p *Emoticon2EmojiPlugin) MessageWillBePosted(post *model.Post) (*model.Post, string) {
+func (p *Emoticon2EmojiPlugin) MessageWillBePosted(c *plugin.Context, post *model.Post) (*model.Post, string) {
 	post.Message = p.translate(post.Message)
 	return post, ""
 }
 
 // MessageWillBeUpdated converts emoticons in edited posts
-func (p *Emoticon2EmojiPlugin) MessageWillBeUpdated(newPost, oldPost *model.Post) (*model.Post, string) {
+func (p *Emoticon2EmojiPlugin) MessageWillBeUpdated(c *plugin.Context, newPost, oldPost *model.Post) (*model.Post, string) {
 	newPost.Message = p.translate(newPost.Message)
 	return newPost, ""
 }
@@ -59,5 +45,5 @@ func appError(message string, err error) *model.AppError {
 
 // Install the RCP plugin
 func main() {
-	rpcplugin.Main(&Emoticon2EmojiPlugin{})
+	plugin.ClientMain(&Emoticon2EmojiPlugin{})
 }
