@@ -1,0 +1,53 @@
+package main
+
+// Missing matches from Slack
+var slackMatches = map[string]string{
+	"</3":  "broken_heart",
+	"8)":   "sunglasses",
+	"D:":   "anguished",
+	":o)":  "monkey_face",
+	":-*":  "kiss",
+	":*":   "kiss",
+	":×":   "kiss",
+	"=)":   "smiley",
+	"=-)":  "smiley",
+	":-D":  "smile",
+	";‑)":  "wink",
+	":>":   "laughing",
+	":->":  "laughing",
+	">:(":  "angry",
+	">:-(": "angry",
+	"(:":   "slightly_smiling_face",
+	"):":   "slightly_frowning_face",
+	":\\":  "confused",
+	":-\\": "confused",
+	":‑p":  "stuck_out_tongue",
+	":b":   "stuck_out_tongue",
+	":-b":  "stuck_out_tongue",
+	";‑p":  "stuck_out_tongue_closed_eyes",
+	";p":   "stuck_out_tongue_closed_eyes",
+	";b":   "stuck_out_tongue_closed_eyes",
+	";-b":  "stuck_out_tongue_closed_eyes",
+}
+
+// Default custom matches
+var defaultCustomMatches = map[string]string{
+	":-3": "smiley",
+	":3":  "smiley",
+	"8-)": "sunglasses",
+	"8‑D": "smile",
+	"8D":  "smile",
+	"xD":  "laughing",
+	"XD":  "laughing",
+	"=D":  "smile",
+	"=3":  "smile",
+	":c":  "frowning_face",
+	":<":  "frowning",
+	":@":  "rage",
+	":')": "joy",
+	"XP":  "stuck_out_tongue_closed_eyes",
+	"xp":  "stuck_out_tongue_closed_eyes",
+	":X":  "zipper_mouth_face",
+	"O:)": "angel",
+	">:)": "smiling_imp",
+}
