@@ -8,6 +8,7 @@ after_success:
 env:
 - GO111MODULE="on"
 install:
+- curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.37.1
 - make
 deploy:
   provider: releases
