@@ -45,11 +45,11 @@ func TestUpdatedPostWithSlackEmoticon(t *testing.T) {
 	_ = p.OnConfigurationChange()
 
 	post := &model.Post{
-		Message: "Hello </3 !!",
+		Message: "Hello =) !!",
 	}
 	post, err := p.MessageWillBeUpdated(nil, post, nil)
 	assert.NotNil(t, post)
-	assert.Equal(t, "Hello :broken_heart: !!", post.Message)
+	assert.Equal(t, "Hello :smiley: !!", post.Message)
 	assert.Equal(t, "", err)
 }
 

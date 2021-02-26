@@ -2,7 +2,6 @@ package main
 
 // Missing matches from Slack
 var slackMatches = map[string]string{
-	"</3":  "broken_heart",
 	"8)":   "sunglasses",
 	"D:":   "anguished",
 	":o)":  "monkey_face",
@@ -11,7 +10,6 @@ var slackMatches = map[string]string{
 	":×":   "kiss",
 	"=)":   "smiley",
 	"=-)":  "smiley",
-	":-D":  "smile",
 	";‑)":  "wink",
 	":>":   "laughing",
 	":->":  "laughing",
@@ -44,7 +42,6 @@ var defaultCustomMatches = map[string]string{
 	":c":  "frowning_face",
 	":<":  "frowning",
 	":@":  "rage",
-	":')": "joy",
 	"XP":  "stuck_out_tongue_closed_eyes",
 	"xp":  "stuck_out_tongue_closed_eyes",
 	":X":  "zipper_mouth_face",
